@@ -1,4 +1,4 @@
-module tui-yandex
+module tilling-auto-glazeWM
 
 go 1.21
 

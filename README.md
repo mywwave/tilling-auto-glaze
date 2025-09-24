@@ -1,81 +1,128 @@
+# Tilling Auto GlazeWM - Window Manager Helper
 
-Приложение для автоматического управления окнами через WebSocket соединение с tiling window manager.
+[![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://www.microsoft.com/windows)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Возможности
+A lightweight Windows application that automatically manages window tiling through WebSocket connection with your window manager.
 
-- 🖥️ **Системный трей** - приложение работает в фоновом режиме
-- 🔌 **Автоматическое подключение** - подключается к window manager на localhost:6123 при запуске
-- 🎯 **Автоматическое переключение** - переключает направление tiling при размере окна ≤ 50%
-- 🚀 **Автозагрузка** - можно включить/отключить автозапуск с Windows
-- 🚪 **Корректный выход** - кнопка "Выход" в меню трея
+## 🎯 What it does
 
-## Установка и запуск
+Tilling Auto GlazeWM automatically switches window tiling direction when windows become too small, providing a seamless window management experience. When a window's size drops to 50% or less, the application automatically toggles the tiling direction to optimize screen space usage.
 
-### Требования
-- Go 1.21+
-- Windows/Linux/macOS
+## ✨ Features
 
-### Сборка
+- 🖥️ **System Tray Integration** - Runs silently in the background
+- 🔌 **Auto-Connect** - Automatically connects to window manager on startup
+- 🎯 **Smart Tiling** - Automatically switches tiling direction when windows are ≤50% size
+- 🚀 **Windows Autostart** - Optional autostart with Windows
+- 🚪 **Clean Exit** - Proper shutdown through system tray
+
+## 🖼️ Demo
+
+![Demo](demo.png)
+
+*Automatic tiling direction switching in action - when windows become too small, the layout automatically adjusts for optimal space usage.*
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Windows 10/11
+- Go 1.21+ (for building from source)
+- A window manager that supports WebSocket on `localhost:6123`
+
+### Installation
+
+1. **Download** the latest release from [Releases](../../releases)
+2. **Run** `tilling-auto-glazeWM.exe`
+3. **Right-click** the system tray icon to access options
+
+### Building from Source
+
 ```bash
+# Clone the repository
+git clone https://github.com/mywwave/tilling-auto-glazeWM.git
+cd tilling-auto-glazeWM
+
+# Install dependencies
 go mod tidy
-go build -o tui-yandex.exe main.go
+
+# Build (with GUI - no console window)
+go build -ldflags "-H windowsgui" -o tilling-auto-glazeWM.exe main.go
+
+# Run
+./tilling-auto-glazeWM.exe
 ```
 
-### Запуск
-```bash
-./tui-yandex.exe
+## 🎮 Usage
+
+1. **Launch** the application - it will appear in your system tray
+2. **Automatic Connection** - connects to WebSocket server at `ws://localhost:6123`
+3. **Smart Tiling** - automatically switches tiling direction when needed
+4. **System Tray Menu**:
+   - **Status** - shows connection status
+   - **Autostart** - toggle Windows autostart (✓ = enabled)
+   - **Exit** - close the application
+
+## 🔧 How it Works
+
+The application connects to your window manager via WebSocket and:
+
+1. **Subscribes** to `window_managed` events
+2. **Monitors** window size changes
+3. **Automatically switches** tiling direction when window size ≤ 50%
+4. **Sends** `toggle-tiling-direction` command to optimize layout
+
+## ⚙️ Configuration
+
+### WebSocket Connection
+
+- **Default URL**: `ws://localhost:6123`
+- **Event**: `window_managed`
+- **Command**: `toggle-tiling-direction`
+
+### Windows Autostart
+
+The application manages Windows autostart through the registry:
+- **Registry Key**: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
+- **Value Name**: `TillingAutoGlazeWM`
+- **Auto-detection**: Checks if autostart is already configured
+
+## 🏗️ Architecture
+
+```
+├── main.go              # Main application code
+├── go.mod               # Go module dependencies
+├── go.sum               # Dependency checksums
+├── README.md            # This file
+└── demo.png             # Demo screenshot
 ```
 
-## Использование
+## 📦 Dependencies
 
-1. **Запустите приложение** - появится иконка в системном трее
-2. **Правый клик на иконку** - откроется меню
-3. **"Подключиться"** - подключение к WebSocket серверу
-4. **"Отключиться"** - отключение от сервера
-5. **"Выход"** - закрытие приложения
+- [`github.com/gorilla/websocket`](https://github.com/gorilla/websocket) - WebSocket client
+- [`github.com/getlantern/systray`](https://github.com/getlantern/systray) - System tray integration
+- [`golang.org/x/sys`](https://golang.org/x/sys) - Windows system calls and registry access
 
-## Меню трея
+## 🤝 Contributing
 
-- **Статус** - показывает текущее состояние подключения
-- **Автозагрузка** - переключает автозапуск с Windows (✓ означает включено)
-- **Выход** - полностью закрывает приложение
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## Логика работы
+## 📄 License
 
-Приложение подключается к WebSocket серверу на `ws://localhost:6123` и:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. Подписывается на события `window_managed`
-2. Получает данные о размере окон
-3. При размере окна ≤ 50% автоматически отправляет команду `toggle-tiling-direction`
-4. Логирует все действия в консоль
+## 🙏 Acknowledgments
 
-## Технические детали
+- [GlazeWM](https://github.com/lars-berger/GlazeWM) - Modern tiling window manager for Windows
+- [Gorilla WebSocket](https://github.com/gorilla/websocket) - WebSocket implementation
+- [Systray](https://github.com/getlantern/systray) - Cross-platform system tray library
 
-- **WebSocket клиент** - использует gorilla/websocket
-- **Системный трей** - использует getlantern/systray
-- **Контекст** - для корректного управления жизненным циклом
-- **Горутины** - для асинхронной обработки событий
+---
 
-## Структура проекта
-
-```
-├── main.go          # Основной код приложения
-├── go.mod           # Зависимости Go модуля
-├── go.sum           # Хеши зависимостей
-└── README.md        # Документация
-```
-
-## Автозагрузка
-
-Приложение автоматически проверяет состояние автозагрузки при запуске и отображает соответствующий статус в меню трея:
-
-- **"✓ Автозагрузка включена"** - приложение будет запускаться с Windows
-- **"Автозагрузка выключена"** - приложение не будет запускаться автоматически
-
-Клик по пункту меню переключает состояние автозагрузки в реестре Windows.
-
-## Зависимости
-
-- `github.com/gorilla/websocket` - WebSocket клиент
-- `github.com/getlantern/systray` - системный трей
-- `golang.org/x/sys` - системные вызовы и работа с реестром Windows
+**Made with ❤️ for the Windows tiling community**

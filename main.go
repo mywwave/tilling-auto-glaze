@@ -42,8 +42,8 @@ func main() {
 func onReady() {
 	// Создаем иконку трея
 	systray.SetIcon(getIconData())
-	systray.SetTitle("TUI Yandex")
-	systray.SetTooltip("TUI Yandex - Window Manager Helper")
+	systray.SetTitle("Tilling Auto GlazeWM")
+	systray.SetTooltip("Tilling Auto GlazeWM - Window Manager Helper")
 
 	// Добавляем пункты меню
 	mStatus = systray.AddMenuItem("Статус: Подключение...", "Статус подключения")
@@ -203,14 +203,14 @@ func isAutostartEnabled() bool {
 	}
 
 	// Проверяем, есть ли запись в автозагрузке
-	_, _, err = key.GetStringValue("TUIYandex")
+	_, _, err = key.GetStringValue("TillingAutoGlazeWM")
 	if err != nil {
 		// Записи нет - автозагрузка выключена
 		return false
 	}
 
 	// Проверяем, что путь в реестре совпадает с текущим путем
-	value, _, err := key.GetStringValue("TUIYandex")
+	value, _, err := key.GetStringValue("TillingAutoGlazeWM")
 	if err != nil {
 		return false
 	}
@@ -238,9 +238,9 @@ func toggleAutostart() {
 
 	if isAutostartEnabled() {
 		// Удаляем запись из автозагрузки
-		key.DeleteValue("TUIYandex")
+		key.DeleteValue("TillingAutoGlazeWM")
 	} else {
 		// Добавляем запись в автозагрузку
-		key.SetStringValue("TUIYandex", exePath)
+		key.SetStringValue("TillingAutoGlazeWM", exePath)
 	}
 }
